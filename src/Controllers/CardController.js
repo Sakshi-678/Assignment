@@ -66,7 +66,7 @@ const cardList = async (req, res) => {
             return res.status(404).send({ status: false, message: 'No Card found' })
         }
 
-        res.status(200).send({ status: true, message: 'Card list', data: card })
+       return res.status(200).send({ status: true, message: 'Card list', data: card })
 
     }catch(err){
         return res.status(500).send({ status: false, message: err.message })
