@@ -1,5 +1,5 @@
-const mongoose = require('mongoose')
-const cardModel = require('../Models/CardModel');
+const mongoose = require('mongoose');
+const CardModel = require('../Models/CardModel');
 const ObjectId = mongoose.Types.ObjectId
 
 const isValid = function (value) {
@@ -20,7 +20,7 @@ const createCard = async (req, res) => {
         if (!isValidRequestBody(data)) {
             return res.status(400).send({ status: false, message: "Invalid request parameters.. Please Provide User Details" })
         }
-        let { cardNumber, cardType, customerName, status, vision, customerID } = data
+        let { cardType, customerName, status, vision, customerID } = data
 
 
         if (!isValid(cardType)) {
@@ -39,9 +39,15 @@ const createCard = async (req, res) => {
         if (!isValid(vision)) {
             return res.status(400).send({ status: false, message: "Please Provide vision" })
         }
-        let dataOf = { cardNumber, cardType, customerName, status, vision, customerID }
 
-        const savedData = await cardModel.create(dataOf);
+        let latestcard=await CardModel.find().sort({_id:-1}).limit(1);
+        let a=(latestcard[0].cardNumber)
+        let b=a.substr(0,a.length-1)
+        let c=b+(parseInt(a[a.length-1])+1)
+        
+        let dataOf = { cardNumber:c, cardType, customerName, status, vision, customerID }
+
+        const savedData = await CardModel.create(dataOf);
         return res.status(201).send({ status: true, message: "Successfully Created", data: savedData });
     }
     catch (err) {
@@ -49,4 +55,22 @@ const createCard = async (req, res) => {
     }
 }
 
-module.exports = { createCard }
+//-----------------------------------------------------------------------------------------
+
+
+const cardList = async (req, res) => {
+    try {
+        
+        const card = await CardModel.find()
+        if (Array.isArray(card) && card.length === 0) {
+            return res.status(404).send({ status: false, message: 'No Card found' })
+        }
+
+        res.status(200).send({ status: true, message: 'Card list', data: card })
+
+    }catch(err){
+        return res.status(500).send({ status: false, message: err.message })
+ }
+}
+
+module.exports = { createCard, cardList }

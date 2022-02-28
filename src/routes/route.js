@@ -13,5 +13,6 @@ router.delete('/deleteCustomer/:customerId',CustomerController.deleteCustomer)
 
 //CARD
 router.post('/create',CardController.createCard)
+router.get('/cardList',CardController.cardList)
 
 module.exports = router
